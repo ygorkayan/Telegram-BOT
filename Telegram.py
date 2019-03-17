@@ -33,7 +33,7 @@ class Telegram:
 
     #Metodo para verificar se o usuario é admin
     def __verificar_usuarios(self, id):
-       return True if id == 547939468 else False
+       return True if id == 000000000 else False
 
 
     # Metodo que trabalha com id, nome, texto, vindo do metodo __mensagem_usuario
