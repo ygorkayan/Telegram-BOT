@@ -1,19 +1,17 @@
 import telepot
-from Comandos import Comandos
+import time
 
-#ID BOT: ID DO SEU BOT
-#ID ID DO USUARIO: E O ID DO SEU TELEGRAM 
-#Classe recebe msg do telegram e verifica se é um comando, sendo ele chama a classe comandos e ezecuta algo
+# ID BOT: ID DO SEU BOT
+# ID ID DO USUARIO: E O ID DO SEU TELEGRAM
 
 class Telegram:
 
-
-    def __init__(self , ID):
+    def __init__(self, ID):
         self.bot = telepot.Bot(ID)
 
-
-    # Metodo para pega id, nome e Mensagem, vinda do Usuario 
-    def __msg_recebida(self, msg): 
+    # Metodo responsavel por pegar o id, nome e msg vinda do Telegram do 
+    # usuario, e al final chama o __tratar_msg para fazer algo com a msg
+    def __msg_recebida(self, msg):
         temp = msg["from"]
         id = temp["id"]
         nome = temp["first_name"]
@@ -21,43 +19,28 @@ class Telegram:
             texto = msg["text"]
         except Exception:
             texto = "So é permitido Texto"
-        Mensagem = {"id":id, "nome":nome, "texto": texto}
+        Mensagem = {"id": id, "nome": nome, "texto": texto}
         self.__tratar_msg(Mensagem)
 
-
-    #Metodo para verificar comando, so funciona se Usuario for Admin
-    def __verificar_comando(self, texto):
-            Comando = Comandos()
-            return Comando.Verificar(texto)
-
-
-    #Metodo para verificar se o usuario é admin
-    def __verificar_usuarios(self, id):
-       return True if id == 000000000 else False
-
-
-    # Metodo que trabalha com id, nome, texto, vindo do metodo __mensagem_usuario
+    # Esse metodo é responsavel por tratar a msg vinda do usuario, e com
+    # ele que posso agregar funçao as msg vinda do usuario
     def __tratar_msg(self, msg):
         id = msg["id"]
         nome = msg["nome"]
         texto = msg["texto"]
-        #print(id, nome, texto)
-        super_usuario = self.__verificar_usuarios(id)
-        if texto.startswith("/") and super_usuario:
-            texto = self.__verificar_comando(texto)
-        else:
-            texto = "Comando nao existe, ou voce nao é Admin"
+        print(id, nome, texto)  # gera um long no terminal
         self.mandar_msg(id, texto)
-   
 
-   # Recebe um dicionario do Usuario
     def receber_msg(self):
+        """ Metodo onde abilita o recebimento de mensagem """
         self.bot.message_loop(self.__msg_recebida)
-        while True:  # Esse while esta sem otimizaçao, por esta em loop infinito, consome muito recuso
-            pass     # Para melhora, pensei em fazer toda vez que ele entra no loop ele espera 1 segundo
-                     # e ai proseguir, porem em Python nao sei fazer o Sleep(1000) do C#
+        while True:        # self.bot.message_loop nao é bloquenate, com isso
+            time.sleep(10) # ao executar ele abilita o recebimento de msg e 
+                           # quando o metodo receber_msg termina fecha o recebimento
+                           # o while True, é para que o receber_msg nao feche o 
+                           # bot.message_loop
 
-
-    #Manda Msg para usuario
     def mandar_msg(self, id, msg):
+        """ Para mandar uma msg, basta saber o id, com ele é so
+        enviar a mensagem """
         self.bot.sendMessage(id, msg)
